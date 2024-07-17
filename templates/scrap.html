@@ -1,0 +1,118 @@
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>IP Camera Feed with Object Detection</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+  <style>
+    #container {
+      position: relative;
+      width: 1280px;
+      height: 960px;
+    }
+    #video, #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>IP Camera Feed with Object Detection</h1>
+  <div id="container">
+    <img id="video" src="/video" width="1280px" height="960px">
+    <canvas id="canvas" width="1280px" height="960px"></canvas>
+  </div>
+  <script>
+    async function loadModel() {
+      try {
+        console.log('Loading model...');
+        const model = await cocoSsd.load();
+        console.log('Model loaded');
+        return model;
+      } catch (error) {
+        console.error('Error loading model:', error);
+      }
+    }
+
+    async function detectObjects(model) {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+    async function detect() {
+        try {
+        const predictions = await model.detect(video);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        predictions.forEach(prediction => {
+            const [x, y, width, height] = prediction.bbox;
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, width, height);
+            ctx.font = '18px Arial';
+            ctx.fillStyle = 'red';
+            ctx.fillText(`${prediction.class}: ${Math.round(prediction.score * 100)}%`, x, y > 10 ? y - 5 : 10);
+
+            // If the detected class is an animal, log it to the console
+            if (["bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe"].includes(prediction.class)) {
+            console.log(`Detected ${prediction.class} with confidence: ${Math.round(prediction.score * 100)}%`);
+            }
+        });
+        } catch (error) {
+        console.error('Error during detection:', error);
+        }
+        requestAnimationFrame(detect);
+    }
+
+    detect();
+    }
+
+    async function main() {
+      try {
+        const model = await loadModel();
+        if (model) {
+          detectObjects(model);
+        }
+      } catch (error) {
+        console.error('Error in main:', error);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
+ -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>IP Camera Feed</title>
+</head>
+<body>
+  <h1>IP Camera Feed</h1>
+  <img src="{{ url_for('video_feed') }}" width="640" height="480">
+</body>
+</html> -->
