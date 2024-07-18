@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response
 import cv2
 from ultralytics import YOLO
 import time
+import cProfile
 
 model = YOLO("./models/yolov10n.pt")
 
@@ -92,8 +93,15 @@ def gen_video_stream():
 def video_feed():
     return Response(gen_video_stream(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+# if __name__ == "__main__":
+#     app.run(debug=True, port=8079)
+
 if __name__ == "__main__":
+    profiler = cProfile.Profile()
+    profiler.enable()
     app.run(debug=True, port=8079)
+    profiler.disable()
+    profiler.dump_stats("./logs/profile.log")
 
 
 

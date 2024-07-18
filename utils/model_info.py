@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-model = YOLO("./models/yolov8n-seg.pt")
+model = YOLO("../models/yolov10n.pt")
 
 print(model.model.names)  # print the class names (e.g., object detection class labels)
 # print(model.model.nc)  # print the number of classes (num_classes)
