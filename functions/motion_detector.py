@@ -7,8 +7,14 @@ import time
 
 
 class MotionDetector:
-    def __init__(self, url, yolo_model, min_area=750):
-        self.cap = cv2.VideoCapture(url)
+    # def __init__(self, url, yolo_model, min_area=750):
+    def __init__(self, stream, yolo_model, min_area=750):
+
+        # # IP Camera
+        # self.cap = cv2.VideoCapture(url)
+        # YouTube Live
+        self.cap = stream  # Use the stream directly
+
         self.fgbg = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=25)
         self.min_area = min_area
         self.yolo_detector = YoloDetector(yolo_model)

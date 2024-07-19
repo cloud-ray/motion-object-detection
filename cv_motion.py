@@ -4,6 +4,7 @@ from flask import Flask, render_template, Response
 from functions.motion_detector import MotionDetector
 import cv2
 from ultralytics import YOLO
+from vidgear.gears import CamGear
 
 app = Flask(__name__)
 
@@ -18,10 +19,21 @@ yolo_model = YOLO("./models/yolov10n.pt")
 ### LOG ###
 logger.info("YOLO model loaded successfully.")
 
-# Create an instance of the MotionDetector class
-detector = MotionDetector("http://192.168.4.24:8080/video", yolo_model)
+# # MotionDetector Class w/IP Camera
+# detector = MotionDetector("http://192.168.4.24:8080/video", yolo_model)
+# ### LOG ###
+# logger.info("MotionDetector IP Cam instance created.")
+
+# MotionDetector Class w/YouTube Live Stream
+youtube_stream = CamGear(
+    source="https://www.youtube.com/live/F1Q7iN_RWUs?si=vNX3qGEnJ-cs2uCU",
+    stream_mode=True,
+    logging=True
+).start()
+
+detector = MotionDetector(youtube_stream, yolo_model)
 ### LOG ###
-logger.info("MotionDetector instance created.")
+logger.info("MotionDetector YouTube instance created.")
 
 @app.route('/')
 def index():
@@ -32,11 +44,20 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def gen_frames():
+    # # IP CAMERA
+    # while True:
+    #     ret, frame = detector.cap.read()
+    #     if not ret:
+    #         ### LOG ###
+    #         logger.error("Failed to read frame from camera.")
+    #         break
+
+    # YOUTUBE STREAM
     while True:
-        ret, frame = detector.cap.read()
-        if not ret:
+        frame = detector.cap.read()  # Read the frame directly
+        if frame is None:
             ### LOG ###
-            logger.error("Failed to read frame from camera.")
+            logger.error("Failed to read frame from stream.")
             break
 
         motion_detected, frame = detector.detect_motion(frame)
