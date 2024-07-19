@@ -1,4 +1,5 @@
 # app.py
+import logging
 from flask import Flask, render_template, Response
 from functions.motion_detector import MotionDetector
 import cv2
@@ -6,11 +7,21 @@ from ultralytics import YOLO
 
 app = Flask(__name__)
 
+# Configure logging to save logs to a file and append to it
+logging.basicConfig(filename='./logs/app.log', level=logging.DEBUG, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+                    filemode='a')  # Ensure appending mode
+logger = logging.getLogger(__name__)
+
 # Load YOLO model
 yolo_model = YOLO("./models/yolov10n.pt")
+### LOG ###
+logger.info("YOLO model loaded successfully.")
 
 # Create an instance of the MotionDetector class
 detector = MotionDetector("http://192.168.4.24:8080/video", yolo_model)
+### LOG ###
+logger.info("MotionDetector instance created.")
 
 @app.route('/')
 def index():
@@ -24,27 +35,45 @@ def gen_frames():
     while True:
         ret, frame = detector.cap.read()
         if not ret:
+            ### LOG ###
+            logger.error("Failed to read frame from camera.")
             break
 
         motion_detected, frame = detector.detect_motion(frame)
         detector.log_motion(motion_detected)
 
         if motion_detected:
+            ### LOG ###
+            logger.info("Motion detected.")
             print("Motion detected!")
             frame = detector.yolo_detector.detect_and_track(frame)
         else:
+            ### LOG ###
+            logger.debug("No motion detected.")
             print("No motion detected.")
 
         ret, jpeg = cv2.imencode('.jpg', frame)
+        if not ret:
+            ### LOG ###
+            logger.error("Failed to encode frame to JPEG.")
+            break
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
 
 if __name__ == '__main__':
     try:
         app.run(debug=True, port=8079)
+        ### LOG ###
+        logger.info("Flask app started on port 8079.")
+    except Exception as e:
+        ### LOG ###
+        logger.critical("Critical error: %s", e)
     finally:
         detector.cap.release()
         cv2.destroyAllWindows()
+        ### LOG ###
+        logger.info("Released camera and destroyed all windows.")
 
 
 
