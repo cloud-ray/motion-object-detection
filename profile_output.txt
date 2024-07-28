@@ -1,0 +1,156 @@
+Timer unit: 1e-09 s
+
+Total time: 5.2e-05 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: get_original_fps at line 14
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    14                                           @profile
+    15                                           def get_original_fps(cap):
+    16                                               """Retrieve the original FPS of the video stream."""
+    17         1      11000.0  11000.0     21.2      original_fps = cap.get(cv2.CAP_PROP_FPS)
+    18         1       1000.0   1000.0      1.9      if original_fps == 0:
+    19                                                   print("Original stream FPS not available")
+    20                                               else:
+    21         1      39000.0  39000.0     75.0          print(f"Original Stream FPS: {original_fps}")
+    22         1       1000.0   1000.0      1.9      return original_fps
+
+Total time: 0.000339 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: print_metrics at line 51
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    51                                           @profile
+    52                                           def print_metrics(local_fps, frame_latency, cpu_usage, memory_usage):
+    53                                               """Print the performance metrics."""
+    54         8     339000.0  42375.0    100.0      print(f"Local Stream FPS: {local_fps:.2f}, Frame Latency: {frame_latency:.4f}ms, CPU Usage: {cpu_usage}%, Memory Usage: {memory_usage}%")
+
+Total time: 0.004914 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: release_resources at line 56
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    56                                           @profile
+    57                                           def release_resources(cap):
+    58                                               """Release video capture and destroy all windows."""
+    59         1     953000.0 953000.0     19.4      cap.release()
+    60         1    3961000.0    4e+06     80.6      cv2.destroyAllWindows()
+
+Total time: 0.014811 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: calculate_metrics at line 36
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    36                                           @profile
+    37                                           def calculate_metrics(start_time, frame_start_time, frame_count):
+    38                                               """Calculate FPS, frame latency, CPU usage, and memory usage."""
+    39       201     349000.0   1736.3      2.4      elapsed_time = time.time() - start_time
+    40       201     178000.0    885.6      1.2      local_fps = frame_count / elapsed_time
+    41       201      60000.0    298.5      0.4      frame_latency = (time.time() - frame_start_time)
+    42       201    9184000.0  45691.5     62.0      cpu_usage = psutil.cpu_percent(interval=None)
+    43       201    4927000.0  24512.4     33.3      memory_usage = psutil.virtual_memory().percent
+    44       201     113000.0    562.2      0.8      return local_fps, frame_latency, cpu_usage, memory_usage
+
+Total time: 0.199682 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: initialize_video_capture at line 6
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+     6                                           @profile
+     7                                           def initialize_video_capture(stream_url):
+     8                                               """Initialize video capture from the stream URL."""
+     9         1  199475000.0    2e+08     99.9      cap = cv2.VideoCapture(stream_url)
+    10         1     206000.0 206000.0      0.1      if not cap.isOpened():
+    11                                                   raise Exception(f"Error: Unable to open video stream at {stream_url}")
+    12         1       1000.0   1000.0      0.0      return cap
+
+Total time: 0.345639 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: display_frame at line 46
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    46                                           @profile
+    47                                           def display_frame(frame):
+    48                                               """Display the current video frame."""
+    49       201  345639000.0    2e+06    100.0      cv2.imshow('Stream', frame)
+
+Total time: 5.32603 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: read_frame at line 24
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    24                                           @profile
+    25                                           def read_frame(cap, skip_frames):
+    26                                               """Read and return a frame from the video stream."""
+    27       402     950000.0   2363.2      0.0      for _ in range(skip_frames):
+    28       201 2158854000.0    1e+07     40.5          ret, _ = cap.read()
+    29       201     183000.0    910.4      0.0          if not ret:
+    30                                                       raise Exception("Error: Unable to read frame")
+    31       201 3165754000.0    2e+07     59.4      ret, frame = cap.read()
+    32       201     112000.0    557.2      0.0      if not ret:
+    33                                                   raise Exception("Error: Unable to read frame")
+    34       201     174000.0    865.7      0.0      return frame
+
+Total time: 10.3259 s
+File: /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py
+Function: main at line 62
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    62                                           @profile
+    63                                           def main():
+    64         1       1000.0   1000.0      0.0      stream_url = "http://192.168.4.24:8080/video"
+    65         1          0.0      0.0      0.0      skip_frames = 1  # Skip every 'n' frames
+    66                                           
+    67         1          0.0      0.0      0.0      try:
+    68         1  199721000.0    2e+08      1.9          cap = initialize_video_capture(stream_url)
+    69         1      64000.0  64000.0      0.0          original_fps = get_original_fps(cap)
+    70                                           
+    71         1       1000.0   1000.0      0.0          frame_count = 0
+    72         1       2000.0   2000.0      0.0          start_time = time.time()
+    73                                           
+    74       201     432000.0   2149.3      0.0          while True:
+    75       201     511000.0   2542.3      0.0              frame_start_time = time.time()
+    76                                           
+    77                                                       # Read and process a frame
+    78       201 5379832000.0    3e+07     52.1              frame = read_frame(cap, skip_frames)
+    79                                           
+    80                                                       # Calculate metrics
+    81       201     143000.0    711.4      0.0              frame_count += 1
+    82       402   16361000.0  40699.0      0.2              local_fps, frame_latency, cpu_usage, memory_usage = calculate_metrics(
+    83       201      49000.0    243.8      0.0                  start_time, frame_start_time, frame_count
+    84                                                       )
+    85                                           
+    86                                                       # Display the frame
+    87       201  347255000.0    2e+06      3.4              display_frame(frame)
+    88                                           
+    89                                                       # Print performance metrics every 'original_fps' frames
+    90       201     403000.0   2005.0      0.0              if original_fps > 0 and frame_count % int(original_fps) == 0:
+    91         8     388000.0  48500.0      0.0                  print_metrics(local_fps, frame_latency, cpu_usage, memory_usage)
+    92                                           
+    93                                                       # Exit on 'q' key press
+    94       201 4375785000.0    2e+07     42.4              if cv2.waitKey(1) & 0xFF == ord('q'):
+    95         1       1000.0   1000.0      0.0                  break
+    96                                           
+    97                                               except KeyboardInterrupt:
+    98                                                   print("Stream stopped by user")
+    99                                               except Exception as e:
+   100                                                   print(f"An unexpected error occurred: {e}")
+   101                                               finally:
+   102         1    4935000.0    5e+06      0.0          release_resources(cap)
+
+  0.00 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:14 - get_original_fps
+  0.00 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:51 - print_metrics
+  0.00 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:56 - release_resources
+  0.01 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:36 - calculate_metrics
+  0.20 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:6 - initialize_video_capture
+  0.35 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:46 - display_frame
+  5.33 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:24 - read_frame
+ 10.33 seconds - /Users/snezhanavoronina/Documents/deer-seer/1_basic_stream.py:62 - main
